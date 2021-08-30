@@ -4,7 +4,7 @@ export function request(config){
 
   // 1.创建axios的实例
   const instance = axios.create({
-    baseURL: '加coderwhy老师微信',
+    baseURL: '',
     timeout: 5000
   })
 
