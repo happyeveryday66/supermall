@@ -22,13 +22,22 @@
         }
       }
     },
+    data() {
+      return {
+        isLoad: false
+      }
+    },
     components:{
       Swiper,
       SwiperItem
     },
     methods: {
       imageLoad() {
-        console.log('----')
+        if (!this.isLoad) {
+          this.$emit('swiperImageLoad')
+          this.isLoad = true
+        }
+        
       }
     }
   }

@@ -3,6 +3,11 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
+    <tab-control :titles="['流行', '新款', '精选']"
+                   @tabClick="tabClick"
+                   ref="tabControl1"
+                   class="tab-control"
+                   v-show="isTabFixed"/>
     <scroll class="content"
             ref="scroll"
             :probe-type="3"
@@ -13,7 +18,8 @@
       <recommend-view :recommends="recommends"/>
       <FeatureView/>
       <tab-control :titles="['流行', '新款', '精选']"
-                   @tabClick="tabClick" ref="tabControl"/>
+                   @tabClick="tabClick"
+                   ref="tabControl2"/>
       <good-list :goods="showGoods"/>
     </scroll>
     <!--.native监听原生组件-->
@@ -58,7 +64,8 @@
         },
         currentType: 'pop',
         isShowBackTop: false,
-        tabOffsetTop: 0
+        tabOffsetTop: 0,
+        isTabFixed: false
       }
     },
     computed: {
@@ -87,7 +94,7 @@
 
       // 2.获取tabControl的offsetTop
       // 所有的组件都有一个属性$el:用于获取组件中的元素
-      console.log(this.$refs.tabControl.$el.offsetTop)
+      // console.log(this.$refs.tabControl.$el.offsetTop)
 
     },
     methods: {
@@ -115,6 +122,8 @@
           case 2: this.currentType = 'sell'
             break
         }
+        this.$refs.tabControl1.currentIndex = index
+        this.$refs.tabControl2.currentIndex = index
       },
       // 返回顶部
       backClick() {
@@ -122,14 +131,18 @@
       },
       // 隐藏/显示返回顶部按钮
       contentScroll(position) {
+        // 1.判断BackTop是否显示
         this.isShowBackTop = (-position.y) > 1000
+
+        // 2.决定tabControl是否吸顶(position：fiexd)
+        this.isTabFixed = (-position.y) > this.tabOffsetTop
       },
       // 加载更多
       loadMore() {
         this.getHomeGoods(this.currentType)
       },
       swiperImageLoad() {
-        console.log(this.$refs.tabControl.$el.offsetTop)
+        this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
       },
 
       /**
@@ -168,12 +181,14 @@
     background-color: var(--color-tint);
     color: white;
 
+    /*在使用浏览器原生滚动时，为了让导航不跟随一起滚动*/
     position: fixed;
     right: 0;
     left: 0;
     top: 0;
     z-index: 9;
   }
+
 
   .content {
     /*height: 300px;*/
@@ -184,6 +199,17 @@
     left: 0;
     right: 0;
   }
+
+  .tab-control {
+    position: relative;
+    z-index: 9;
+  }
+  /**.fixed {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 44px;
+  }*/
 
 
   /*.content {*/
